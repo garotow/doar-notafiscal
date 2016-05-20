@@ -1,4 +1,4 @@
-package br.com.arquivei.data;
+package br.com.arquivei.model;
 
 /**
  * Created by henri on 4/6/2016.
