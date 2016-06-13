@@ -1,6 +1,6 @@
 # Easy Donate
 
-Aplicative Android para doção de notas fiscais eletônicas.
+Aplicativo Android para doção de notas fiscais eletônicas.
 
 
 ## Pré Requisitos
