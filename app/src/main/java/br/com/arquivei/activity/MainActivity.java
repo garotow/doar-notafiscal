@@ -1,33 +1,31 @@
-package br.com.arquivei.ui;
+package br.com.arquivei.activity;
 
-import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-
 import br.com.arquivei.R;
 import br.com.arquivei.adapter.ListaNotasAdapter;
+import br.com.arquivei.model.Database;
+import br.com.arquivei.model.NotaFiscal;
 
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_QR = 1; // Request ID para a activity do scanner
-    private ArrayList<String> mArrayNotas;
-    private RecyclerView mListaNotas;
-    private ListaNotasAdapter mAdapter;
-    private Button mBotaoDoar;
+    private RecyclerView mListaNotas; // Lista
+    private ListaNotasAdapter mAdapter; // Lista Adapter
+    private ArrayList<NotaFiscal> mArrayNotas; // Notas Fiscais que serão visualizadas na Lista
+    private Button mBotaoDoar; // Botão doar visível ou não
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
          */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Doe Fácil");
+        toolbar.setTitle("Easy Donate");
 
         /*
         Floating Action Button
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView Lista de Notas Fiscais
         */
         mListaNotas = (RecyclerView) findViewById(R.id.list);
-        mArrayNotas = new ArrayList<String>();
+        mArrayNotas = new ArrayList<NotaFiscal>();
         mAdapter = new ListaNotasAdapter(this, mArrayNotas);
         mListaNotas.setAdapter(mAdapter);
         mListaNotas.setLayoutManager(new LinearLayoutManager(this));
@@ -77,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         updateBotaoDoar();
+
+
+      //  SQLiteDatabase db = new Database(this).getWritableDatabase();
     }
 
     @Override
@@ -109,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_QR) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                ArrayList<String> recievedData = data.getStringArrayListExtra(ScannerActivity.NOTAS_FISCAIS);
-                for (String temp : recievedData){
+                ArrayList<NotaFiscal> recievedData = data.getParcelableArrayListExtra(ScannerActivity.NOTAS_FISCAIS);
+                for (NotaFiscal temp : recievedData){
                     mArrayNotas.add(temp);
                 }
                 mAdapter.notifyDataSetChanged();

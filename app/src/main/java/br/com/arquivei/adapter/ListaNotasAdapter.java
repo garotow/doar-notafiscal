@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import br.com.arquivei.R;
+import br.com.arquivei.model.NotaFiscal;
 
 import java.util.ArrayList;
 
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.MyViewHolder> {
 
     private Context mContext;
-    private ArrayList<String> mData; // Lista com os eventos mostrados na data
+    private ArrayList<NotaFiscal> mData; // Lista com os eventos mostrados na data
 
     //  Constructor
-    public ListaNotasAdapter(Context c, ArrayList<String> data) {
+    public ListaNotasAdapter(Context c, ArrayList<NotaFiscal> data) {
         mContext = c;
         mData = data;
     }
@@ -37,7 +38,10 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.name.setText(mData.get(position));
+        holder.name.setText(mData.get(position).getCnpj());
+        holder.dia.setText(mData.get(position).getDia());
+        holder.mes.setText(mData.get(position).getMes());
+        holder.valor.setText(mData.get(position).getValor());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -52,13 +56,18 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
-        public TextView tvTime;
+        public TextView dia;
+        public TextView mes;
+        public TextView valor;
         public View v;
 
         public MyViewHolder(View v) {
             super(v);
             this.v = v;
             name = (TextView) v.findViewById(R.id.tv_name);
+            dia = (TextView) v.findViewById(R.id.tv_dia);
+            mes = (TextView) v.findViewById(R.id.tv_mes);
+            valor = (TextView) v.findViewById(R.id.tv_valor);
         }
     }
 }

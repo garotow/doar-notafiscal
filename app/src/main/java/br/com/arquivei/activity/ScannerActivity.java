@@ -1,11 +1,10 @@
-package br.com.arquivei.ui;
+package br.com.arquivei.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +16,7 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 
 import br.com.arquivei.R;
+import br.com.arquivei.model.NotaFiscal;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
@@ -27,14 +27,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     private TextView mCounterText;
     private Button mConcluir;
     private static int count = 0;
-    private ArrayList<String> mNotasLidas;
+    private ArrayList<NotaFiscal> mNotasLidas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
 
-        mNotasLidas = new ArrayList<String>();
+        mNotasLidas = new ArrayList<NotaFiscal>();
 
         /*
         Scanner View
@@ -81,21 +81,28 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result result) {
-        // Do something with the result here
-        Log.v(TAG, result.getText()); // Prints scan results
-        Log.v(TAG, result.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        String QRCode = result.getText();
+
+        Log.i(TAG, "QRCode Lido: "+ QRCode); // Prints scan results
+        Log.i(TAG, result.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
 
         // Vibrate Phone for 200 milliseconds
         Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(200);
 
+        if (!checkValidQRCode(QRCode)){
+            Toast.makeText(this, "QRCode inválido, tente novamente!", Toast.LENGTH_SHORT).show();
+            mScannerView.resumeCameraPreview(this);
+            return;
+        }
+
         // Increment counter
         count++;
         mCounterText.setText(String.valueOf(count));
 
-        // Add new nota
-        mNotasLidas.add(result.getText());
-        setResult(RESULT_OK);
+
+        NotaFiscal newNota = new NotaFiscal(QRCode);
+        mNotasLidas.add(newNota);
 
 
         // If you would like to resume scanning, call this method below:
@@ -107,9 +114,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
      */
     private void finishScanner(){
        if (count > 0){
+           // Adiciona as notas no banco de dados
+
            // Envia as notas lidas para main activity
            Intent returnIntent = new Intent();
-           returnIntent.putStringArrayListExtra(NOTAS_FISCAIS, mNotasLidas);
+           //returnIntent.putStringArrayListExtra(NOTAS_FISCAIS, mNotasLidas);
+           returnIntent.putParcelableArrayListExtra(NOTAS_FISCAIS, mNotasLidas);
            setResult(RESULT_OK, returnIntent);
        }
 
@@ -118,6 +128,16 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
         count = 0;
         finish();
+    }
+
+    private void inserirNoBancoDeDados(){
+
+    }
+
+    private boolean checkValidQRCode(String qr){
+        if (qr.length() < 20)
+            return false;
+        else return true;
     }
 
 }

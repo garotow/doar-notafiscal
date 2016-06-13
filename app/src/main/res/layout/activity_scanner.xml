@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ScannerActivity">
+    tools:context=".activity.ScannerActivity">
 
     <me.dm7.barcodescanner.zxing.ZXingScannerView
         android:id="@+id/scanner_view"
@@ -50,20 +50,14 @@
         android:layout_alignParentStart="true"
         android:weightSum="100"
         android:padding="10dp"
+        android:gravity="center_horizontal"
         android:id="@+id/linearLayout">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Adicionar Manualmente"
-            android:id="@+id/button"
-            android:layout_weight="60"
-            style="@style/Widget.AppCompat.Button.Colored"/>
 
         <Button
             android:id="@+id/b_concluir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:text="Concluir"
             android:layout_weight="40"
             style="@style/Widget.AppCompat.Button.Colored"/>
