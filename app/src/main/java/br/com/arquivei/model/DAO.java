@@ -5,6 +5,7 @@ package br.com.arquivei.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import java.text.SimpleDateFormat;
@@ -55,31 +56,65 @@ public class DAO {
         }
     }
 
-    public ArrayList<NotaFiscal> getAllNotas(Context c){
-        ArrayList<NotaFiscal> list = new ArrayList<NotaFiscal>();
-        String selectQuery = "SELECT  * FROM " + Database.TABLE_NAME;
+    public ArrayList<NotaFiscal> getNotasPendentes(Context c){
+        ArrayList<NotaFiscal> aux = new ArrayList<NotaFiscal>();
         SQLiteDatabase db = new Database(c).getReadableDatabase();
         Cursor cursor;
 
+        String selectQuery = "SELECT  * FROM " + Database.TABLE_NAME + " WHERE " + Database.COL_STATUS + " LIKE '" + NotaFiscal.STATUS_PENDING + "'";
         cursor = db.rawQuery(selectQuery, null);
+
+        String valor, cnpj, data, status;
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                NotaFiscal nota = new NotaFiscal("testeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-//                evento.setName(cursor.getString(cursor.getColumnIndex(Database.COL_NAME)));
-//                evento.setDescription(cursor.getString(cursor.getColumnIndex(Database.COL_DESCRIPTION)));
-//                evento.setIconName(cursor.getString(cursor.getColumnIndex(Database.COL_ICON)));
-//                evento.setDate(cursor.getString(cursor.getColumnIndex(Database.COL_DATE)));
-//                evento.setDuration(cursor.getInt(cursor.getColumnIndex(Database.COL_DURATION)));
+                cnpj = cursor.getString(cursor.getColumnIndex(Database.COL_CNPJ));
+                data = cursor.getString(cursor.getColumnIndex(Database.COL_DATA));
+                valor = cursor.getString(cursor.getColumnIndex(Database.COL_VALOR));
+                status = cursor.getString(cursor.getColumnIndex(Database.COL_STATUS));
 
-                // Adding event to list
-                list.add(nota);
+                NotaFiscal nota = new NotaFiscal(cnpj, data, valor, status);
+                aux.add(nota);
             } while (cursor.moveToNext());
         }
 
         db.close();
-        return list;
+        return aux;
+    }
+
+    public ArrayList<NotaFiscal> getNotasEnviadas(Context c){
+        ArrayList<NotaFiscal> aux = new ArrayList<NotaFiscal>();
+        SQLiteDatabase db = new Database(c).getReadableDatabase();
+        Cursor cursor;
+
+        String selectQuery = "SELECT  * FROM " + Database.TABLE_NAME + " WHERE " + Database.COL_STATUS + " LIKE '" + NotaFiscal.STATUS_OK + "'";
+        cursor = db.rawQuery(selectQuery, null);
+
+        String valor, cnpj, data, status;
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                cnpj = cursor.getString(cursor.getColumnIndex(Database.COL_CNPJ));
+                data = cursor.getString(cursor.getColumnIndex(Database.COL_DATA));
+                valor = cursor.getString(cursor.getColumnIndex(Database.COL_VALOR));
+                status = cursor.getString(cursor.getColumnIndex(Database.COL_STATUS));
+
+                NotaFiscal nota = new NotaFiscal(cnpj, data, valor, status);
+                aux.add(nota);
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        return aux;
+    }
+
+    public int confirmarNotasEnviadas(Context c){
+        SQLiteDatabase db = new Database(c).getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Database.COL_STATUS, NotaFiscal.STATUS_OK);
+        return db.update(Database.TABLE_NAME, values, Database.COL_STATUS + " = '" + NotaFiscal.STATUS_PENDING + "'", null);
     }
 
     public static void registerDatabaseListener(DatabaseChangedListener newListener){

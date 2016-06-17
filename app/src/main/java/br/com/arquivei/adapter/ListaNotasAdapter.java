@@ -10,6 +10,7 @@ import android.widget.TextView;
 import br.com.arquivei.R;
 import br.com.arquivei.model.NotaFiscal;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -41,7 +42,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
         holder.name.setText(mData.get(position).getCnpj());
         holder.dia.setText(mData.get(position).getDia());
         holder.mes.setText(mData.get(position).getMes());
-        holder.valor.setText(mData.get(position).getValor());
+        holder.valor.setText("R$" + String.format("%.2f", Float.valueOf(mData.get(position).getValor())));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

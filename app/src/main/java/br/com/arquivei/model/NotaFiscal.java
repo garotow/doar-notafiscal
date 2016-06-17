@@ -16,13 +16,13 @@ public class NotaFiscal implements Parcelable {
     // Abreviação Meses
     public static final String[] MESES = {"Jan", "Fev", "Mar", "Abril", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"};
 
+    private String QRcode;
     private String data;
     private String valor;
     private String cnpj;
-    private String QRcode;
     private String status;
 
-    /* Construtor */
+    /* Construtores */
     public NotaFiscal(String valorQR) {
         this.QRcode = valorQR;
         this.data = "";
@@ -30,6 +30,13 @@ public class NotaFiscal implements Parcelable {
         this.cnpj = "";
         this.status = STATUS_PENDING;
         filtrarNota();
+    }
+
+    public NotaFiscal(String cnpj, String data, String valor, String status) {
+        this.data = data;
+        this.valor = valor;
+        this.cnpj = cnpj;
+        this.status = status;
     }
 
     public String getData() {
@@ -50,7 +57,7 @@ public class NotaFiscal implements Parcelable {
 
 
     /* Extrai os campos CNPJ, data e Valor da nota fiscal a partir do QR Code*/
-    public void filtrarNota() {
+    private void filtrarNota() {
 
         // QR Code: ID|TimeStamp|Valor||...
         // ID: CNJP: xxxxxx 99.999.999/9999-99 xxxx xxxx xxxx xxxx xxxx xxxx

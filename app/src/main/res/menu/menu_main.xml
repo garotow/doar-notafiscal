@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.MainActivity">
     <item
-        android:id="@+id/action_send"
+        android:id="@+id/action_records"
         android:orderInCategory="1"
         android:title="Histórico"
         android:icon="@drawable/ic_history_white_48dp"

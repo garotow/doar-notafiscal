@@ -17,7 +17,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
 
     // Database Version
-    public static final int DB_VERSION = 3;
+    public static final int DB_VERSION = 4;
 
     // Database Name
     public static final String DB_NAME = "arquivei.db";

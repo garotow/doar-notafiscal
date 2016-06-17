@@ -54,10 +54,16 @@
         android:id="@+id/linearLayout">
 
         <Button
+            android:id="@+id/b_cancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:layout_weight="40"
+            style="@style/Widget.AppCompat.Button.Colored"/>
+        <Button
             android:id="@+id/b_concluir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:text="Concluir"
             android:layout_weight="40"
             style="@style/Widget.AppCompat.Button.Colored"/>

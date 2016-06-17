@@ -16,6 +16,7 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 
 import br.com.arquivei.R;
+import br.com.arquivei.model.DAO;
 import br.com.arquivei.model.NotaFiscal;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -115,14 +116,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     private void finishScanner(){
        if (count > 0){
            // Adiciona as notas no banco de dados
-
-           // Envia as notas lidas para main activity
-           Intent returnIntent = new Intent();
-           //returnIntent.putStringArrayListExtra(NOTAS_FISCAIS, mNotasLidas);
-           returnIntent.putParcelableArrayListExtra(NOTAS_FISCAIS, mNotasLidas);
-           setResult(RESULT_OK, returnIntent);
+           DAO bd = DAO.getInstance();
+           for (NotaFiscal temp : mNotasLidas ){
+               bd.insertNota(this, temp);
+           }
+           setResult(RESULT_OK);
        }
-
        else
           setResult(RESULT_CANCELED);
 
@@ -135,7 +134,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     private boolean checkValidQRCode(String qr){
-        if (qr.length() < 20)
+        if (qr.length() < 25)
             return false;
         else return true;
     }
