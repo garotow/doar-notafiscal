@@ -39,6 +39,7 @@ public class DAO {
         SQLiteDatabase db = new Database(c).getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(Database.COL_QRCODE, e.getQRcode());
         values.put(Database.COL_CNPJ, e.getCnpj());
         values.put(Database.COL_VALOR, e.getValor());
         values.put(Database.COL_DATA, e.getData());
@@ -64,17 +65,18 @@ public class DAO {
         String selectQuery = "SELECT  * FROM " + Database.TABLE_NAME + " WHERE " + Database.COL_STATUS + " LIKE '" + NotaFiscal.STATUS_PENDING + "'";
         cursor = db.rawQuery(selectQuery, null);
 
-        String valor, cnpj, data, status;
+        String qr, valor, cnpj, data, status;
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
+                qr = cursor.getString(cursor.getColumnIndex(Database.COL_QRCODE));
                 cnpj = cursor.getString(cursor.getColumnIndex(Database.COL_CNPJ));
                 data = cursor.getString(cursor.getColumnIndex(Database.COL_DATA));
                 valor = cursor.getString(cursor.getColumnIndex(Database.COL_VALOR));
                 status = cursor.getString(cursor.getColumnIndex(Database.COL_STATUS));
 
-                NotaFiscal nota = new NotaFiscal(cnpj, data, valor, status);
+                NotaFiscal nota = new NotaFiscal(qr, cnpj, data, valor, status);
                 aux.add(nota);
             } while (cursor.moveToNext());
         }
@@ -91,17 +93,18 @@ public class DAO {
         String selectQuery = "SELECT  * FROM " + Database.TABLE_NAME + " WHERE " + Database.COL_STATUS + " LIKE '" + NotaFiscal.STATUS_OK + "'";
         cursor = db.rawQuery(selectQuery, null);
 
-        String valor, cnpj, data, status;
+        String valor, cnpj, data, status, qr;
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
+                qr = cursor.getString(cursor.getColumnIndex(Database.COL_QRCODE));
                 cnpj = cursor.getString(cursor.getColumnIndex(Database.COL_CNPJ));
                 data = cursor.getString(cursor.getColumnIndex(Database.COL_DATA));
                 valor = cursor.getString(cursor.getColumnIndex(Database.COL_VALOR));
                 status = cursor.getString(cursor.getColumnIndex(Database.COL_STATUS));
 
-                NotaFiscal nota = new NotaFiscal(cnpj, data, valor, status);
+                NotaFiscal nota = new NotaFiscal(qr, cnpj, data, valor, status);
                 aux.add(nota);
             } while (cursor.moveToNext());
         }

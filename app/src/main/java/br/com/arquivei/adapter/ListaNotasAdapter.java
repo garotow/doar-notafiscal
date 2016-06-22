@@ -2,6 +2,7 @@ package br.com.arquivei.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
 
     private Context mContext;
     private ArrayList<NotaFiscal> mData; // Lista com os eventos mostrados na data
+    private onLongClickItem mListener;
 
     //  Constructor
     public ListaNotasAdapter(Context c, ArrayList<NotaFiscal> data) {
@@ -32,6 +34,12 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(mContext).inflate(R.layout.nota_row, parent, false);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("ListaNotasAdapter", "OnClick333");
+            }
+        });
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
@@ -43,6 +51,23 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
         holder.dia.setText(mData.get(position).getDia());
         holder.mes.setText(mData.get(position).getMes());
         holder.valor.setText("R$" + String.format("%.2f", Float.valueOf(mData.get(position).getValor())));
+        holder.v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("ListaNotasAdapter", "OnClick!!");
+            }
+        });
+        holder.v.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.i("ListaNotasAdapter", "OnLongClick!!");
+                if (mListener != null) {
+                    mListener.onLongClickNota(position);
+                    return true;
+                } else
+                    return false;
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -69,6 +94,20 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
             dia = (TextView) v.findViewById(R.id.tv_dia);
             mes = (TextView) v.findViewById(R.id.tv_mes);
             valor = (TextView) v.findViewById(R.id.tv_valor);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("ListaNotasAdapter", "OnClick!!2");
+                }
+            });
         }
+    }
+
+    public void setOnLongClickListener(onLongClickItem listener) {
+        mListener = listener;
+    }
+
+    public interface onLongClickItem {
+        void onLongClickNota(int position);
     }
 }

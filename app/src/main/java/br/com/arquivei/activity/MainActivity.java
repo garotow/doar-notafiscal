@@ -2,40 +2,47 @@ package br.com.arquivei.activity;
 
 import android.content.Intent;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import br.com.arquivei.R;
 import br.com.arquivei.adapter.ListaNotasAdapter;
+import br.com.arquivei.asynctask.HttpPostTask;
 import br.com.arquivei.model.DAO;
 import br.com.arquivei.model.NotaFiscal;
+import br.com.arquivei.asynctask.ServerConnectionTask;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ServerConnectionTask.serverConnectionListener, ListaNotasAdapter.onLongClickItem {
     static final int REQUEST_QR = 1; // Request ID para a activity do scanner
     private RecyclerView mListaNotas; // Lista
     private ListaNotasAdapter mAdapter; // Lista Adapter
     private ArrayList<NotaFiscal> mArrayNotas; // Notas Fiscais que serão visualizadas na Lista
     private Button mBotaoDoar; // Botão doar visível ou não
+    private ImageView mTutorial;
+  //  private SweetAlertDialog pDialog; // Dialogo Delete
 
-    private SweetAlertDialog pDialog; // Dialog
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
          */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Easy Donate");
-        toolbar.setNavigationIcon(R.drawable.donate_icon);
 
         /*
         Floating Action Button
@@ -68,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mListaNotas = (RecyclerView) findViewById(R.id.list);
         mArrayNotas = new ArrayList<NotaFiscal>();
         mAdapter = new ListaNotasAdapter(this, mArrayNotas);
+        mAdapter.setOnLongClickListener(this);
         mListaNotas.setAdapter(mAdapter);
         mListaNotas.setLayoutManager(new LinearLayoutManager(this));
         mListaNotas.setHasFixedSize(true);
@@ -82,13 +88,19 @@ public class MainActivity extends AppCompatActivity {
                 executeDoar();
             }
         });
+
+        /*
+        ImageView Tutorial
+         */
+        mTutorial = (ImageView) findViewById(R.id.tutorial);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         updateNotasFromDatabase();
-        updateBotaoDoar();
+        updateViewsVisibility();
     }
 
     private void updateNotasFromDatabase() {
@@ -99,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             mArrayNotas.add(temp);
         }
         mAdapter.notifyDataSetChanged();
-        updateBotaoDoar();
+        updateViewsVisibility();
     }
 
     @Override
@@ -133,54 +145,50 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_QR) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-
             } else {
                 Toast.makeText(this, "Nada recebido", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    // Atualiza o Botão Doar
-    private void updateBotaoDoar() {
-        if (mArrayNotas.size() > 0)
+    // Atualiza o Botão Doar e Imagem tutorial
+    private void updateViewsVisibility() {
+        if (mArrayNotas.size() > 0) {
             mBotaoDoar.setVisibility(View.VISIBLE);
-        else
+            mTutorial.setVisibility(View.GONE);
+        }
+        else {
             mBotaoDoar.setVisibility(View.GONE);
+            mTutorial.setVisibility(View.VISIBLE);
+        }
     }
 
     private void executeDoar() {
-        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-                .setTitleText("Enviando...");
-        pDialog.show();
-        pDialog.setCancelable(false);
+        ServerConnectionTask enviarNotasTask = new ServerConnectionTask(MainActivity.this, mArrayNotas, this);
+        enviarNotasTask.execute();
 
-        DAO dao = DAO.getInstance();
-        dao.confirmarNotasEnviadas(getApplicationContext());
-        updateNotasFromDatabase();
+        //new HttpPostTask().execute();
 
-        new EnviarNotasTask().execute();
     }
 
-    // AsyncTask que vai enviar as notas para o site
-    private class EnviarNotasTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
+    @Override
+    public void onConnectionFinish() {
+        updateNotasFromDatabase();
+    }
 
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            pDialog.setTitleText("Parabéns! Notas enviadas!")
-                    .setConfirmText("OK")
-                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-        }
+    @Override
+    public void onLongClickNota(int position) {
+       new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Deseja deletar esta nota?")
+                .setContentText("Não será possível recupera-la")
+                .setConfirmText("Sim!")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
 }

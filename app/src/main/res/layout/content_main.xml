@@ -12,20 +12,31 @@
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_height="400dp"
+    <FrameLayout
+        android:id="@+id/frame"
         android:layout_width="match_parent"
-        />
+        android:layout_height="400dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:src="@drawable/no_notas"/>
+    </FrameLayout>
 
     <Button
         android:id="@+id/bdoar"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:text="Doar!"
-        android:theme="@style/ColoredButton"
-        android:layout_below="@+id/list"
+        android:layout_below="@+id/frame"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true" />
+        android:text="Doar!"
+        android:theme="@style/ColoredButton" />
 
 </RelativeLayout>

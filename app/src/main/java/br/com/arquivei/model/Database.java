@@ -17,15 +17,14 @@ public class Database extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
 
     // Database Version
-    public static final int DB_VERSION = 4;
+    public static final int DB_VERSION = 5;
 
     // Database Name
     public static final String DB_NAME = "arquivei.db";
     public static final String TABLE_NAME = "notas_table";
 
     // Colunas
-    public static final String COL_ID = "ID";
-    public static final String COL_NAME = "nome";
+    public static final String COL_QRCODE = "qr";
     public static final String COL_CNPJ = "cnpj";
     public static final String COL_VALOR = "valor";
     public static final String COL_DATA = "data";
@@ -43,8 +42,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String create = "CREATE TABLE " + TABLE_NAME + " (\n" +
-                COL_ID + " integer NOT NULL primary key autoincrement,\n" +
-                COL_NAME + " TEXT,\n" +
+                COL_QRCODE + " TEXT NOT NULL primary key ,\n" +
                 COL_CNPJ + " TEXT,\n" +
                 COL_VALOR + " REAL, \n" +
                 COL_DATA + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +

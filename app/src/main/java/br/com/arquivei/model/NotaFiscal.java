@@ -20,6 +20,7 @@ public class NotaFiscal implements Parcelable {
     private String data;
     private String valor;
     private String cnpj;
+    private String cnpj_formatado;
     private String status;
 
     /* Construtores */
@@ -28,16 +29,19 @@ public class NotaFiscal implements Parcelable {
         this.data = "";
         this.valor = "";
         this.cnpj = "";
+        this.cnpj_formatado="";
         this.status = STATUS_PENDING;
         filtrarNota();
     }
 
-    public NotaFiscal(String cnpj, String data, String valor, String status) {
+    public NotaFiscal(String qr, String cnpj, String data, String valor, String status) {
+        this.QRcode = qr;
         this.data = data;
         this.valor = valor;
         this.cnpj = cnpj;
         this.status = status;
     }
+    public String getQRcode(){ return this.QRcode; }
 
     public String getData() {
         return this.data;
@@ -48,6 +52,8 @@ public class NotaFiscal implements Parcelable {
     }
 
     public String getCnpj() { return this.cnpj; }
+
+    public String getCnpj_formatado() {return this.cnpj_formatado;}
 
     public String getStatus() { return status; }
 
@@ -82,7 +88,7 @@ public class NotaFiscal implements Parcelable {
             this.cnpj = this.cnpj + id.charAt(j);
         }
 
-        cnpj = String.format("%s.%s.%s/%s-%s", cnpj.substring(0, 2), cnpj.substring(2,5), cnpj.substring(5,8), cnpj.substring(8, 12), cnpj.substring(12));
+        cnpj_formatado = String.format("%s.%s.%s/%s-%s", cnpj.substring(0, 2), cnpj.substring(2,5), cnpj.substring(5,8), cnpj.substring(8, 12), cnpj.substring(12));
 
         //Pegando data
         for (i++ ; this.QRcode.charAt(i) != '|'; i++) {
