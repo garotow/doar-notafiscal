@@ -2,14 +2,12 @@ package br.com.arquivei.activity;
 
 import android.content.Intent;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,16 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import br.com.arquivei.R;
 import br.com.arquivei.adapter.ListaNotasAdapter;
-import br.com.arquivei.asynctask.HttpPostTask;
 import br.com.arquivei.model.DAO;
 import br.com.arquivei.model.NotaFiscal;
 import br.com.arquivei.asynctask.ServerConnectionTask;
@@ -34,13 +25,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends AppCompatActivity implements ServerConnectionTask.serverConnectionListener, ListaNotasAdapter.onLongClickItem {
     static final int REQUEST_QR = 1; // Request ID para a activity do scanner
-    private RecyclerView mListaNotas; // Lista
-    private ListaNotasAdapter mAdapter; // Lista Adapter
+    private RecyclerView mListaNotas; // ListView
+    private ListaNotasAdapter mAdapter; // List Adapter
     private ArrayList<NotaFiscal> mArrayNotas; // Notas Fiscais que serão visualizadas na Lista
     private Button mBotaoDoar; // Botão doar visível ou não
     private ImageView mTutorial;
-  //  private SweetAlertDialog pDialog; // Dialogo Delete
-
 
 
 
@@ -103,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements ServerConnectionT
         updateViewsVisibility();
     }
 
+    /* Atualiza as notas que serão mostradas na lista */
     private void updateNotasFromDatabase() {
         DAO bd = DAO.getInstance();
         ArrayList<NotaFiscal> aux = bd.getNotasPendentes(this);
@@ -128,9 +118,14 @@ public class MainActivity extends AppCompatActivity implements ServerConnectionT
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_records) {
             Intent i = new Intent(getApplicationContext(), HistoricoActivity.class);
+            startActivity(i);
+            return true;
+        }
+
+        if (id == R.id.action_about) {
+            Intent i = new Intent(getApplicationContext(), SobreActivity.class);
             startActivity(i);
             return true;
         }
@@ -163,18 +158,19 @@ public class MainActivity extends AppCompatActivity implements ServerConnectionT
         }
     }
 
+
+    // Executa ao apertar o botão doar
     private void executeDoar() {
         ServerConnectionTask enviarNotasTask = new ServerConnectionTask(MainActivity.this, mArrayNotas, this);
         enviarNotasTask.execute();
-
-        //new HttpPostTask().execute();
-
     }
 
 
+    // Executa após a task de enviar as notas finaliza
     @Override
-    public void onConnectionFinish() {
-        updateNotasFromDatabase();
+    public void onConnectionFinish(boolean result) {
+        if (result)
+            updateNotasFromDatabase();
     }
 
     @Override

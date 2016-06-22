@@ -33,12 +33,13 @@ public class ServerConnectionTask extends AsyncTask<Void, Void, String> {
     private Context mContext;
     private SweetAlertDialog pDialog; // Dialogo de Progresso
     private serverConnectionListener mListener;
+    private ArrayList<NotaFiscal> mNotas;
     private String postData; // String que será enviada
 
     /* Construtor */
     public ServerConnectionTask(Context c, ArrayList<NotaFiscal> notas, serverConnectionListener listener) {
         this.mContext = c;
-        this.postData = getPostData(notas);
+        this.mNotas = notas;
         this.mListener = listener;
         pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE)
                 .setTitleText(LOADING_MESSAGE);
@@ -57,32 +58,40 @@ public class ServerConnectionTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
         try {
-            // Defined URL  where to send data
-            URL url = new URL(SERVER_URL);
-            // Send POST data request
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(postData);
-            wr.flush();
 
-            /*
-            * Get the server response
-            * Mesmo nao sendo necessário pegar resposta do server, se remover essa parte não irá funcionar,
-            * não sei porque
-            */
+            // Para cada nota fiscal que precisa ser enviada
+            for (NotaFiscal temp : mNotas) {
+                // Defined URL  where to send data
+                URL url = new URL(SERVER_URL);
+                // Send POST data request
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-            String response = "";
-            BufferedReader reader = null;
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+
+                wr.write(getPostData(temp));
+                wr.flush();
+
+
+                /*
+                 * Get the server response
+                 * Mesmo nao sendo necessário pegar resposta do server, se remover essa parte não irá funcionar,
+                 * não sei porque
+                 */
+
+                String response = "";
+                BufferedReader reader = null;
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                response = sb.toString();
+                reader.close();
             }
-            response = sb.toString();
-            reader.close();
+
             return POST_SUCCED;
 
         } catch (Exception e) {
@@ -100,32 +109,36 @@ public class ServerConnectionTask extends AsyncTask<Void, Void, String> {
                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
 
             DAO dao = DAO.getInstance();
-            //dao.confirmarNotasEnviadas(mContext);
+            dao.confirmarNotasEnviadas(mContext);
+            mListener.onConnectionFinish(true);
         } else {
-            pDialog.setTitleText("Sem Internet!/nTente novamente mais tarde")
+            pDialog.setTitleText("Sem Internet!")
+                    .setContentText("Conecte-se e tente novamente mais tarde.")
                     .setConfirmText("OK")
                     .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+            mListener.onConnectionFinish(false);
         }
-        mListener.onConnectionFinish();
+
     }
 
 
     /* Converte a lista de notas fiscais em uma String que será enviada no POST HTTP */
-    private String getPostData(ArrayList<NotaFiscal> notas) {
+    private String getPostData(NotaFiscal nota) {
         // Create data variable for sent values to server
         String data = "";
         try {
+
             data = URLEncoder.encode("txtData", "UTF-8")
-                    + "=" + URLEncoder.encode("oiii", "UTF-8");
+                    + "=" + URLEncoder.encode(nota.getData(), "UTF-8");
 
             data += "&" + URLEncoder.encode("txtQRCode", "UTF-8") + "="
-                    + URLEncoder.encode("o32323232i", "UTF-8");
+                    + URLEncoder.encode(nota.getQRcode(), "UTF-8");
 
             data += "&" + URLEncoder.encode("txtValor", "UTF-8")
-                    + "=" + URLEncoder.encode("oiii", "UTF-8");
+                    + "=" + URLEncoder.encode(nota.getValor(), "UTF-8");
 
             data += "&" + URLEncoder.encode("txtCNPJ", "UTF-8")
-                    + "=" + URLEncoder.encode("deu certo", "UTF-8");
+                    + "=" + URLEncoder.encode(nota.getCnpj(), "UTF-8");
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -136,6 +149,6 @@ public class ServerConnectionTask extends AsyncTask<Void, Void, String> {
 
 
     public interface serverConnectionListener {
-        void onConnectionFinish();
+        void onConnectionFinish(boolean result);
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import br.com.arquivei.R;
 import br.com.arquivei.model.NotaFiscal;
@@ -47,14 +48,15 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.My
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.name.setText(mData.get(position).getCnpj());
+        holder.name.setText(mData.get(position).getCnpj_formatado());
         holder.dia.setText(mData.get(position).getDia());
         holder.mes.setText(mData.get(position).getMes());
         holder.valor.setText("R$" + String.format("%.2f", Float.valueOf(mData.get(position).getValor())));
+        holder.v.setClickable(true);
         holder.v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("ListaNotasAdapter", "OnClick!!");
+                Toast.makeText(mContext, "Clicou na nota!", Toast.LENGTH_LONG).show();
             }
         });
         holder.v.setOnLongClickListener(new View.OnLongClickListener() {

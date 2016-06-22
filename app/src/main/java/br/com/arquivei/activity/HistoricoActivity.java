@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -17,14 +18,17 @@ public class HistoricoActivity extends AppCompatActivity {
     private RecyclerView mListaNotas; // Lista
     private ListaNotasAdapter mAdapter; // Lista Adapter
     private ArrayList<NotaFiscal> mArrayNotas; // Notas Fiscais que serão visualizadas na Lista
+    private TextView mTextTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historico);
 
+        /* TextView */
+        mTextTotal = (TextView) findViewById(R.id.tv_total);
 
-                /*
+        /*
         RecyclerView Lista de Notas Fiscais
         */
         mListaNotas = (RecyclerView) findViewById(R.id.list);
@@ -48,5 +52,17 @@ public class HistoricoActivity extends AppCompatActivity {
         }
         mAdapter.notifyDataSetChanged();
 
+        mTextTotal.setText("Você doou um total de: R$" + getTotalDoado());
+
+    }
+
+    public double getTotalDoado(){
+        double total = 0.0;
+
+        for (NotaFiscal temp : mArrayNotas){
+            total += Double.parseDouble(temp.getValor());
+        }
+
+        return total;
     }
 }
