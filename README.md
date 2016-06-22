@@ -11,8 +11,16 @@ Main            |  QR Reader |  Dialog
 ## Pré Requisitos
 * Android Android 4.0.3 ou superior (minSdkVersion 15)
 
+## Instalando
+* Faça o download do APK aqui. 
+
 ## Compilando o projeto
 
 1. Clone : ```git clone https://github.com/garotow/doar-notafiscal``` ou faça o download do código
 2. Importe o projeto para o Android Studio (versão utilizada 2.2)
+3. Build
+4. Run
 
+## Aplicação web
+
+A aplicação web que interage com esse aplciativo pode ser encontrado no repositório [aqui](https://github.com/victormn/easydonate/).
