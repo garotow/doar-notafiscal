@@ -23,4 +23,4 @@ Main            |  QR Reader |  Dialog
 
 ## Aplicação web
 
-A aplicação web que interage com esse aplciativo pode ser encontrado no repositório [aqui](https://github.com/victormn/easydonate/)
+A aplicação web que interage com esse aplciativo pode ser encontrado no repositório [aqui](https://github.com/victormn/easydonate/).
