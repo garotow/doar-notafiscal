@@ -12,7 +12,7 @@ Main            |  QR Reader |  Dialog
 * Android Android 4.0.3 ou superior (minSdkVersion 15)
 
 ## Instalando
-* Faça o download do APK aqui. 
+* Faça o download do APK [aqui.](https://www.dropbox.com/s/gdm7cbuy39u1p8i/easy-donate.apk?dl=0)
 
 ## Compilando o projeto
 
