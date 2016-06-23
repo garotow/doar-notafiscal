@@ -13,12 +13,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-
 import br.com.arquivei.model.DAO;
 import br.com.arquivei.model.NotaFiscal;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static android.R.attr.data;
+
 
 /**
  * Created by henrique on 6/17/2016.

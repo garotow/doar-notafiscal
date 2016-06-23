@@ -82,14 +82,10 @@ public class NotaFiscal implements Parcelable {
             id = id + this.QRcode.charAt(i);
         }
 
-        Log.i("nota", id);
-
         //A partir ID, filtrar CNPJ
         for (int j = 6; j < 20; j++) {
             this.cnpj = this.cnpj + id.charAt(j);
         }
-
-
 
         //Pegando data
         for (i++ ; this.QRcode.charAt(i) != '|'; i++) {
@@ -103,6 +99,8 @@ public class NotaFiscal implements Parcelable {
         for (i++ ; this.QRcode.charAt(i) != '|'; ++i) {
             this.valor = this.valor + this.QRcode.charAt(i);
         }
+
+        this.QRcode = id;
     }
 
     /* Métodos do Parcelable para enviar o objeto NotaFiscal entre duas activitys*/

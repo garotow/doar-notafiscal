@@ -165,6 +165,13 @@ public class MainActivity extends AppCompatActivity implements ServerConnectionT
         enviarNotasTask.execute();
     }
 
+    // Delete Nota
+    private void deleteNotaFiscal(String qr){
+        DAO dao = DAO.getInstance();
+        dao.deletarNotaFiscal(this, qr);
+        updateNotasFromDatabase();
+    }
+
 
     // Executa após a task de enviar as notas finaliza
     @Override
@@ -174,15 +181,17 @@ public class MainActivity extends AppCompatActivity implements ServerConnectionT
     }
 
     @Override
-    public void onLongClickNota(int position) {
+    public void onLongClickNota(final int position) {
        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Deseja deletar esta nota?")
                 .setContentText("Não será possível recupera-la")
-                .setConfirmText("Sim!")
+                .setConfirmText("Deletar")
+                .setCancelText("Cancelar")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
+                        deleteNotaFiscal(mArrayNotas.get(position).getQRcode());
                     }
                 })
                 .show();

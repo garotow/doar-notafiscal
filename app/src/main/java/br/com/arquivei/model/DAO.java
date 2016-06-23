@@ -5,14 +5,11 @@ package br.com.arquivei.model;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 
 /**
  * Created by Henrique on 1/26/2016.
@@ -25,7 +22,6 @@ public class DAO {
     /* Lista de observers - Observer Pattern */
     private static List<DatabaseChangedListener> listeners = new ArrayList<DatabaseChangedListener>();
 
-
     /* Singleton Pattern */
     public static DAO sInstance = null;
     public static DAO getInstance(){
@@ -33,7 +29,6 @@ public class DAO {
             sInstance = new DAO();
         return sInstance;
     }
-
 
     public boolean insertNota(Context c, NotaFiscal e){
         SQLiteDatabase db = new Database(c).getWritableDatabase();
@@ -120,6 +115,19 @@ public class DAO {
         return db.update(Database.TABLE_NAME, values, Database.COL_STATUS + " = '" + NotaFiscal.STATUS_PENDING + "'", null);
     }
 
+    public void deletarNotaFiscal(Context c, String QRCode){
+        SQLiteDatabase db = new Database(c).getWritableDatabase();
+        Log.i("DAO", "tentando deletar qr=" + QRCode);
+        int flag = db.delete(Database.TABLE_NAME, Database.COL_QRCODE + "='" + QRCode + "'", null);
+        Log.i("DAO", "resultado "+ flag + " tentando deletar qr=" + QRCode);
+        db.close();
+    }
+
+
+    /*
+    * Padrão Observer
+    * Não foi utilizado ainda mas poderá ser incluido futuramente
+    */
     public static void registerDatabaseListener(DatabaseChangedListener newListener){
         listeners.add(newListener);
         Log.i("DAO", "novo observer registrado " + listeners.toString());
