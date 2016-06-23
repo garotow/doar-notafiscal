@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import br.com.arquivei.R;
@@ -51,8 +52,8 @@ public class HistoricoActivity extends AppCompatActivity {
             mArrayNotas.add(temp);
         }
         mAdapter.notifyDataSetChanged();
-
-        mTextTotal.setText("Você doou um total de: R$" + getTotalDoado());
+        DecimalFormat df = new DecimalFormat("#.00");
+        mTextTotal.setText("Você doou um total de: R$" + df.format(getTotalDoado()));
 
     }
 
